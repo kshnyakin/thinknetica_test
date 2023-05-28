@@ -41,6 +41,14 @@ def handle_response(answer)
   end
 end
 
+def select_exist_entity(class_name)
+  class_name.list.each_with_index do |entity, index|
+    puts "#{index + 1}) #{entity.inspect}"
+  end
+  selected_index = gets.chomp.to_i - 1
+  class_name.list[selected_index]
+end
+
 def create_station
   print 'Введите название станции: '
   station_name = gets.chomp.to_s
@@ -78,6 +86,16 @@ def create_train
   end
 end
 
+def assign_route
+  puts "Выберите поезд, которому вы хотите назначить маршрут:"
+  selected_train = select_exist_entity(Train)
+  puts "Выберите маршрут, который вы хотите назначить поезду:"
+  selected_route = select_exist_entity(Route)
+  selected_train.receive_route(selected_route)
+  puts "Для поезда #{selected_train}"
+  puts "назначен маршрут #{selected_route}"
+end
+
 def create_carriage
   puts "Введите тип вагона, который вы хотите создать:"\
   "\n\t 1 - Грузовой "\
@@ -104,51 +122,15 @@ def routes_management
   end
 end
 
-def select_exist_entity(class_name)
-  class_name.list.each_with_index do |entity, index|
-    puts "#{index + 1}) #{entity.inspect}"
-  end
-  selected_index = gets.chomp.to_i - 1
-  class_name.list[selected_index]
-end
+def create_route
+  puts "Выберите начальную станцию маршрута:"
+  start_station = select_exist_entity(Station)
 
-def assign_route
-  puts "Выберите поезд, которому вы хотите назначить маршрут:"
-  selected_train = select_exist_entity(Train)
-  puts "Выберите маршрут, который вы хотите назначить поезду:"
-  selected_route = select_exist_entity(Route)
-  selected_train.receive_route(selected_route)
-  puts "Для поезда #{selected_train}"
-  puts "назначен маршрут #{selected_route}"
-end
+  puts "Выберите конечную станцию маршрута:"
+  end_station = select_exist_entity(Station)
 
-def carriage_management
-  puts "Выберите поезд, для изменения вагонов:"
-  selected_train = select_exist_entity(Train)
-  puts "Выберите операцию над поездом:"\
-  "\n\t 1 - Добавить вагон "\
-  "\n\t 2 - Удалить вагон"
-  carriage_operation = gets.chomp.to_i
-  case carriage_operation
-  when 1
-    puts "Выберите вагон для добавления"
-    selected_carriage = select_exist_entity(Carriage)
-    result = selected_train.add_wagon(selected_carriage)
-    if result 
-      puts "для поезда #{selected_train.inspect} добавлен вагон #{selected_carriage}"
-    else
-      puts "для поезда #{selected_train.inspect} вагон #{selected_carriage} не может быть добавлен"
-    end
-  when 2
-    puts "Выберите вагон для удаления: "
-    selected_train.wagons.each_with_index do |wagon, index|
-      puts "#{index + 1} - #{wagon.inspect}"
-    end
-    wagon_to_delete_index = gets.chomp.to_i - 1
-    wagon_to_delete = selected_train.wagons[wagon_to_delete_index]
-    selected_train.delete_wagon(wagon_to_delete)
-    puts "у поезда #{selected_train.inspect} удален вагон #{wagon_to_delete}"
-  end
+  route = Route.new(start_station, end_station)
+  puts "Создан маршрут #{route.inspect}"
 end
 
 def edit_route
@@ -182,17 +164,6 @@ def edit_route
   end
 end
 
-def create_route
-  puts "Выберите начальную станцию маршрута:"
-  start_station = select_exist_entity(Station)
-
-  puts "Выберите конечную станцию маршрута:"
-  end_station = select_exist_entity(Station)
-
-  route = Route.new(start_station, end_station)
-  puts "Создан маршрут #{route.inspect}"
-end
-
 def route_moving
   puts "Выберите поезд, который планируете переместить:"
   train = select_exist_entity(Train)
@@ -217,8 +188,34 @@ def route_moving
   end
 end
 
-
-
+def carriage_management
+  puts "Выберите поезд, для изменения вагонов:"
+  selected_train = select_exist_entity(Train)
+  puts "Выберите операцию над поездом:"\
+  "\n\t 1 - Добавить вагон "\
+  "\n\t 2 - Удалить вагон"
+  carriage_operation = gets.chomp.to_i
+  case carriage_operation
+  when 1
+    puts "Выберите вагон для добавления"
+    selected_carriage = select_exist_entity(Carriage)
+    result = selected_train.add_wagon(selected_carriage)
+    if result 
+      puts "для поезда #{selected_train.inspect} добавлен вагон #{selected_carriage}"
+    else
+      puts "для поезда #{selected_train.inspect} вагон #{selected_carriage} не может быть добавлен"
+    end
+  when 2
+    puts "Выберите вагон для удаления: "
+    selected_train.wagons.each_with_index do |wagon, index|
+      puts "#{index + 1} - #{wagon.inspect}"
+    end
+    wagon_to_delete_index = gets.chomp.to_i - 1
+    wagon_to_delete = selected_train.wagons[wagon_to_delete_index]
+    selected_train.delete_wagon(wagon_to_delete)
+    puts "у поезда #{selected_train.inspect} удален вагон #{wagon_to_delete}"
+  end
+end
 
 puts 'Добро пожаловать в интерфейс управления железнодорожными дорогами!'
 
@@ -228,6 +225,3 @@ loop do
   break if answer == 0
   result = handle_response(answer)
 end
-
-
-
