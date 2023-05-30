@@ -1,3 +1,4 @@
+
 require_relative "station"
 require_relative "route"
 require_relative "train"
@@ -25,6 +26,9 @@ class Main
     end
   end
 
+  private
+  attr_reader :stations, :routes, :trains, :carriages
+
   def show_menu
     puts "\nДля вас доступны следующие команды:"
     puts "\t 1 - Создать станцию"\
@@ -38,9 +42,6 @@ class Main
          "\n\t 9 - Управление вагонами поезда"\
          "\n\t 0 - завершить работу с программой"
   end
-
-  private
-  attr_accessor :stations, :routes, :trains, :carriages
 
   def get_action
     print 'Введите номер интересующей вас команды: '
@@ -236,24 +237,33 @@ class Main
     carriage_operation = gets.chomp.to_i
     case carriage_operation
     when 1
-      puts "Выберите вагон для добавления"
-      selected_carriage = select_exist_entity(:carriages)
-      result = selected_train.add_carriage(selected_carriage)
-      if result 
-        puts "для поезда #{selected_train.inspect} добавлен вагон #{selected_carriage}"
-      else
-        puts "для поезда #{selected_train.inspect} вагон #{selected_carriage} не может быть добавлен"
-      end
+      add_carriage(selected_train)
     when 2
-      puts "Выберите вагон для удаления: "
-      selected_train.carriages.each_with_index do |carriage, index|
-        puts "#{index + 1} - #{carriage.inspect}"
-      end
-      carriage_to_delete_index = gets.chomp.to_i - 1
-      carriage_to_delete = selected_train.carriages[carriage_to_delete_index]
-      selected_train.delete_carriage(carriage_to_delete)
-      puts "у поезда #{selected_train.inspect} удален вагон #{carriage_to_delete}"
+      delete_carriage(selected_train)
     end
+  end
+
+  def add_carriage(selected_train)
+    puts "Выберите вагон для добавления"
+    selected_carriage = select_exist_entity(:carriages)
+    result = selected_train.add_carriage(selected_carriage)
+    if result 
+      puts "для поезда #{selected_train.inspect} добавлен вагон #{selected_carriage}"
+    else
+      puts "для поезда #{selected_train.inspect} вагон #{selected_carriage} не может быть добавлен, "\
+           "т.к. он другого типа или поезд не остановлен"
+    end
+  end
+
+  def delete_carriage(selected_train)
+    puts "Выберите вагон для удаления: "
+    selected_train.carriages.each_with_index do |carriage, index|
+      puts "#{index + 1} - #{carriage.inspect}"
+    end
+    carriage_to_delete_index = gets.chomp.to_i - 1
+    carriage_to_delete = selected_train.carriages[carriage_to_delete_index]
+    selected_train.delete_carriage(carriage_to_delete)
+    puts "у поезда #{selected_train.inspect} удален вагон #{carriage_to_delete}"
   end
 
 end

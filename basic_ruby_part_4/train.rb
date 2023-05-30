@@ -15,14 +15,14 @@ class Train
   end
 
   def add_carriage(carriage)
-    if speed == 0
+    if speed == 0 && type == carriage.type
       @carriages << carriage
     end
   end
 
   def delete_carriage(carriage)
     if speed == 0 && @carriages.size > 0
-      @carriagees.delete(carriage)
+      @carriages.delete(carriage)
     end
   end
 
