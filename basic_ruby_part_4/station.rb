@@ -1,16 +1,11 @@
 class Station
   attr_reader :name, :trains
-  @@object_ids = []
+
   def initialize(name)
     @name = name
     @trains = []
-    @@object_ids << self.object_id
   end
   
-  def self.list
-    @@object_ids.map{|object_id| ObjectSpace._id2ref(object_id) }
-  end
-
   def receive_train(train)
     trains << train
   end

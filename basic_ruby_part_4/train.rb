@@ -1,15 +1,9 @@
 class Train
-  attr_reader :speed, :wagons, :type
-  @@object_ids = []
+  attr_reader :speed, :carriages, :type
   def initialize(number)
     @number = number
-    @wagons = []
+    @carriages = []
     @speed = 0
-    @@object_ids << self.object_id
-  end
-
-  def self.list
-    @@object_ids.map{|object_id| ObjectSpace._id2ref(object_id) }
   end
 
   def increase_speed(growth)
@@ -20,20 +14,20 @@ class Train
     @speed = 0
   end
 
-  def add_wagon(wagon)
+  def add_carriage(carriage)
     if speed == 0
-      @wagons << wagon
+      @carriages << carriage
     end
   end
 
-  def delete_wagon(wagon)
-    if speed == 0 && @wagons.size > 0
-      @wagons.delete(wagon)
+  def delete_carriage(carriage)
+    if speed == 0 && @carriages.size > 0
+      @carriagees.delete(carriage)
     end
   end
 
-  def wagons_qty
-    @wagons.size
+  def carriages_qty
+    @carriages.size
   end
 
   def receive_route(route)
@@ -69,22 +63,6 @@ class Train
   def prev_station
     if @current_station_index > 0
       @route.stations[@current_station_index - 1]
-    end
-  end
-end
-
-class CargoTrain < Train
-  def add_wagon(wagon)
-    if wagon.class == CargoCarriage
-      super(wagon)
-    end
-  end
-end
-
-class PassengerTrain < Train
-  def add_wagon(wagon)
-    if wagon.class == PassengerCarriage
-      super(wagon)
     end
   end
 end
