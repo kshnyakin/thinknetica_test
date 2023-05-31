@@ -194,7 +194,7 @@ class Main
         puts "Поезд не может быть перемещен вперед, так как находится на конечной станции маршрута"
       end
     when 2
-      if train.go_prev_station
+      if train.go_previous_station
         puts "поезд #{train} перемещен назад на 1 станцию, текущая станция = #{train.current_station.name}"
       else
         puts "Поезд не может быть перемещен назад, так как находится на начальной станции маршрута"
@@ -265,7 +265,6 @@ class Main
     selected_train.delete_carriage(carriage_to_delete)
     puts "у поезда #{selected_train.inspect} удален вагон #{carriage_to_delete}"
   end
-
 end
 
 Main.new.start

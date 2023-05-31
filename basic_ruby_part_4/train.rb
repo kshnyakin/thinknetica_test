@@ -26,7 +26,7 @@ class Train
     end
   end
 
-  def carriages_qty
+  def carriages_quantity
     @carriages.size
   end
 
@@ -52,15 +52,15 @@ class Train
     @route.stations[@current_station_index + 1]
   end
 
-  def go_prev_station
-    if prev_station
+  def go_previous_station
+    if previous_station
       current_station.dispatch_train(self)
       @current_station_index -= 1
       current_station.receive_train(self)
     end
   end
 
-  def prev_station
+  def previous_station
     if @current_station_index > 0
       @route.stations[@current_station_index - 1]
     end
