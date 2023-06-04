@@ -8,8 +8,8 @@ class Station
   def initialize(name)
     @name = name
     @trains = []
-    @@stations << 
-    super()
+    @@stations << self
+    register_instance
   end
 
   def self.all
