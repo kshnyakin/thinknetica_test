@@ -1,3 +1,5 @@
+# 1) Пофиксить в интерфейсе выбор не того, что нужно
+
 require_relative 'manufacturer'
 require_relative 'instance_counter'
 

@@ -43,7 +43,7 @@ class Main
   end
 
   def get_action
-    print 'Введите номер интересующей вас команды: '
+    print "\n\tВведите номер интересующей вас команды: "
     gets.chomp.to_i
   end
 
@@ -93,10 +93,9 @@ class Main
   end
 
   def create_train
-    puts "Введите тип поезда, который вы хотите создать:"\
-         "\n\t 1 - Грузовой "\
-         "\n\t 2 - Пассажирский"
-    train_type = gets.chomp.to_i
+    question = 'Введите тип поезда, который вы хотите создать'
+    answers = %w[Грузовой Пассажирский]
+    train_type = get_and_validate_answers(question, answers)
     print 'Введите номер поезда: '
     train_number = gets.chomp.to_s
     begin
@@ -120,10 +119,9 @@ class Main
   end
 
   def routes_management
-    puts "Выберите интересующее вас действие:"\
-    "\n\t 1 - Создать маршрут"\
-    "\n\t 2 - Управлять существующим маршрутом"
-    select = gets.chomp.to_i
+    question = 'Выберите интересующее вас действие'
+    answers = ['Создать маршрут', 'Управлять существующим маршрутом']
+    select = get_and_validate_answers(question, answers)
     case select
       when 1
         create_route
@@ -147,10 +145,9 @@ class Main
   def edit_route
     puts "Выберите маршрут, которым вы хотите управлять:"
     selected_route = select_exist_entity(:routes)
-    puts "Выберите операцию над маршрутом #{selected_route.inspect}:"\
-         "\n\t 1 - Добавить станцию"\
-         "\n\t 2 - Удалить станцию"
-    route_operation = gets.chomp.to_i
+    question = "Выберите операцию над маршрутом #{selected_route.inspect}:"
+    answers = ['Добавить станцию', 'Удалить станцию']
+    route_operation = get_and_validate_answers(question, answers)
     case route_operation
     when 1
       puts "Выберите станцию, которую, вы хотите добавить в маршрут:"
@@ -189,10 +186,9 @@ class Main
     puts "Выберите поезд, который планируете переместить:"
     train = select_exist_entity(:trains)
     puts "Поезд находится на станции #{train.current_station.name}"
-    puts "Что нужно сделать с поездом?"\
-    "\n\t 1 - Переместить вперед по маршруту"\
-    "\n\t 2 - Переместить назад по маршруту"
-    move_operation = gets.chomp.to_i
+    question = "Что нужно сделать с поездом?"
+    answers = ['Переместить вперед по маршруту', 'Переместить назад по маршруту']
+    move_operation = get_and_validate_answers(question, answers)
     case move_operation
     when 1
       if train.go_next_station
@@ -219,10 +215,9 @@ class Main
   end
 
   def create_carriage
-    puts "Введите тип вагона, который вы хотите создать:"\
-    "\n\t 1 - Грузовой "\
-    "\n\t 2 - Пассажирский"
-    carriage_type = gets.chomp.to_i
+    question = "Введите тип вагона, который вы хотите создать:"
+    answers = %w[Грузовой Пассажирский]
+    carriage_type = get_and_validate_answers(question, answers)
     case carriage_type
     when 1
       carriage = CargoCarriage.new
@@ -238,10 +233,9 @@ class Main
   def carriage_management
     puts "Выберите поезд, для изменения вагонов:"
     selected_train = select_exist_entity(:trains)
-    puts "Выберите операцию над поездом:"\
-    "\n\t 1 - Добавить вагон "\
-    "\n\t 2 - Удалить вагон"
-    carriage_operation = gets.chomp.to_i
+    question = "Выберите операцию над поездом:"
+    answers = ['Добавить вагон', 'Удалить вагон']
+    carriage_operation = get_and_validate_answers(question, answers)
     case carriage_operation
     when 1
       add_carriage(selected_train)
@@ -271,6 +265,18 @@ class Main
     carriage_to_delete = selected_train.carriages[carriage_to_delete_index]
     selected_train.delete_carriage(carriage_to_delete)
     puts "у поезда #{selected_train.inspect} удален вагон #{carriage_to_delete}"
+  end
+
+  def get_and_validate_answers(question, answers)
+    action_number = nil
+    loop do
+      puts "\n#{question}:"
+      answers.each_index{|index| puts "#{index.to_i + 1}. #{answers[index]}"}
+      action_number = get_action
+      break if (1..answers.size).to_a.include? action_number
+      puts "\n\tПожалуйста, повторите ввод, вы ввели неверные данные"
+    end
+    action_number
   end
 end
 
