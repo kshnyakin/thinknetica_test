@@ -13,10 +13,7 @@ class Train
     @speed = 0
     @@trains << self
     register_instance
-    unless valid?
-      raise ArgumentError, 'Number of train must be a String and be eqaul to regular expression '\
-                           'like 222-aaa / bbb-22 / 444ff / fff44 and etc' 
-    end
+    valid?
   end
 
   def self.find(number)
@@ -86,8 +83,21 @@ class Train
   private
 
   def valid?
-    return if @number.class != String
+    validate!
+    true
+  rescue
+    false
+  end
+
+  def regexp_failed?
     regexp = /^([a-zа-я]{3}|[0-9]{3})-?([a-zа-я]{2}|[0-9]{2})$/i
-    (@number =~ regexp).nil? ? false : true
+    (@number =~ regexp).nil?
+  end
+
+  def validate!
+    raise ArgumentError 'Number of train must be a String' if @number.class != String
+    raise ArgumentError 'Number of train must be eqaul to regular expression '\
+                        'like 222-aaa / bbb-22 / 444ff / fff44 and etc' if regexp_failed?
+
   end
 end
