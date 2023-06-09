@@ -1,14 +1,14 @@
 require_relative 'instance_counter'
+require_relative 'validator'
 
 class Route
   include InstanceCounter
+  include Validator
   attr_reader :stations
   def initialize(start_station, end_station)
     @stations = [start_station, end_station]
-    register_instance
-    unless valid?
-      raise ArgumentError, 'Arguments you have passed is not a Station class!' 
-    end
+    valid? ? register_instance : validate!
+    end 
   end
 
   def add_station(station_to_add)
@@ -23,8 +23,13 @@ class Route
 
   private
 
-  def valid?
-    @stations[0].class == Station && @stations[1].class == Station
+  def validate!
+    errors = []
+    errors << 'Arguments you have passed is not a Station class!' unless passed_stations?
+    raise errors.join(', ') unless errors.empty?
   end
 
+  def passed_stations?
+    @stations[0].class == Station && @stations[1].class == Station
+  end
 end

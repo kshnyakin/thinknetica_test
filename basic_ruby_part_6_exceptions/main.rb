@@ -269,14 +269,15 @@ class Main
 
   def get_and_validate_answers(question, answers)
     action_number = nil
-    loop do
-      puts "\n#{question}:"
-      answers.each_index{|index| puts "#{index.to_i + 1}. #{answers[index]}"}
-      action_number = get_action
-      break if (1..answers.size).to_a.include? action_number
-      puts "\n\tПожалуйста, повторите ввод, вы ввели неверные данные"
-    end
+    puts "\n#{question}:"
+    answers.each_index{|index| puts "#{index.to_i + 1}. #{answers[index]}"}
+    action_number = get_action
+    # binding.pry
+  raise unless (1..answers.size).to_a.include? action_number
     action_number
+  rescue
+    puts "\n\tПожалуйста, повторите ввод, вы ввели неверные данные"
+    retry
   end
 end
 

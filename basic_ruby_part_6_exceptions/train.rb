@@ -1,11 +1,12 @@
 # 1) Пофиксить в интерфейсе выбор не того, что нужно
-
 require_relative 'manufacturer'
 require_relative 'instance_counter'
+require_relative 'validator'
 
 class Train
   include Manufacturer
   include InstanceCounter
+  include Validator
   attr_reader :speed, :carriages, :type, :number
   @@trains = []
 
@@ -13,9 +14,12 @@ class Train
     @number = number
     @carriages = []
     @speed = 0
-    @@trains << self
-    register_instance
-    valid?
+    if valid?
+      @@trains << self
+      register_instance
+    else
+      validate!
+    end    
   end
 
   def self.find(number)
@@ -84,22 +88,16 @@ class Train
 
   private
 
-  def valid?
-    validate!
-    true
-  rescue
-    false
+  def validate!
+    errors = []
+    errors << 'Number of train must be a String' if @number.class != String
+    errors << 'Number of train must be eqaul to regular expression '\
+              'like 222-aaa / bbb-22 / 444ff / fff44 and etc' if regexp_failed?
+    raise errors.join(', ') unless errors.empty?
   end
 
   def regexp_failed?
     regexp = /^([a-zа-я]{3}|[0-9]{3})-?([a-zа-я]{2}|[0-9]{2})$/i
     (@number =~ regexp).nil?
-  end
-
-  def validate!
-    raise ArgumentError 'Number of train must be a String' if @number.class != String
-    raise ArgumentError 'Number of train must be eqaul to regular expression '\
-                        'like 222-aaa / bbb-22 / 444ff / fff44 and etc' if regexp_failed?
-
   end
 end

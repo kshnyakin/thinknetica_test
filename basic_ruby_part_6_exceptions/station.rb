@@ -1,19 +1,21 @@
 require_relative 'instance_counter'
+require_relative 'validator'
 
 class Station
   include InstanceCounter
+  include Validator
   attr_reader :name, :trains
   @@stations = []
 
   def initialize(name)
     @name = name
     @trains = []
-    @@stations << self
-    register_instance
-    unless valid?
-      raise ArgumentError, 'Arguments you have passed must be present, '\
-      'have Sting class and length greater or equal 3' 
-    end
+    if valid?
+      @@stations << self
+      register_instance
+    else
+      validate!
+    end 
   end
 
   def self.all
@@ -34,8 +36,11 @@ class Station
 
   private
 
-  def valid?
-    return if @name.class != String || @name.length <= 3
-    true
+  def validate!
+    errors = []
+    errors << 'Station name must be a String' if @name.class != String
+    errors << 'Station name length must '\
+              'be greater or equal 3' if @name.class == String && @name.length <= 3
+    raise errors.join(', ') unless errors.empty?
   end
 end
