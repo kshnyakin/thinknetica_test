@@ -40,7 +40,7 @@ class Station
     errors = []
     errors << 'Station name must be a String' if @name.class != String
     errors << 'Station name length must '\
-              'be greater or equal 3' if @name.class == String && @name.length <= 3
+              'be greater or equal 3' if @name.class == String && @name.length < 3
     raise errors.join(', ') unless errors.empty?
   end
 end
