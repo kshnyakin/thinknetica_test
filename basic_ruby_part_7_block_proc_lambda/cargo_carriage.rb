@@ -11,7 +11,9 @@ class CargoCarriage < Carriage
   end
 
   def reserve_volume(size)
-    @reserved_volume += size if size <= free_volume
+    raise "Error: can not reserve #{size}, "\
+          "avaliable to reserve volume = #{free_volume}" if size > free_volume
+    @reserved_volume += size
   end
 
   def reserved_volume

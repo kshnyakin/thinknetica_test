@@ -27,7 +27,7 @@ class Station
   end
 
   def each_train(&block)
-    @trains.each {|station| block.call(station)}
+    @trains.each {|train| block.call(train)}
   end
 
   def dispatch_train(train)

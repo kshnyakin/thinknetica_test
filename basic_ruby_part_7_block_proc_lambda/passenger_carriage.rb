@@ -11,7 +11,8 @@ class PassengerCarriage < Carriage
   end
 
   def reserve_seat
-    @reserved_seats += 1 if @reserved_seats < @seats
+    raise 'Error: can not reserve seat, all seats are reserved' if free_seats.zero?
+    @reserved_seats += 1
   end
 
   def reserved_seats

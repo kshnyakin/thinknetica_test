@@ -213,7 +213,7 @@ class Main
       counter = 1
       station.each_train do |train|
          puts "#{counter}) Поезд №#{train.number}, "\
-              "тип: #{train.type == :cargo ? 'грузовой' : 'пассажирский'}, "\
+              "тип: #{carriage_or_train_type_string(train.type)}, "\
               "количество вагонов: #{train.carriages_quantity}"
         counter += 1
       end
@@ -226,26 +226,34 @@ class Main
     carriage_type = get_and_validate_answers(question, answers)
     case carriage_type
     when 1
-      create_cargo_carriage     
+      create_carriage_by_type(:cargo)     
     when 2
-      create_passenger_carriage
+      create_carriage_by_type(:passenger)  
     end
   end
 
-  def create_cargo_carriage
-    print "Введите объем вагона (целое число): "
-    volume = gets.chomp.to_i
-    carriage = CargoCarriage.new(volume)
+  def create_carriage_by_type(type)
+    case type
+    when :cargo
+      print "Введите объем вагона (целое число): "
+      volume = gets.chomp.to_i
+      carriage = CargoCarriage.new(volume)
+    when :passenger
+      print "Введите количество мест в вагоне (целое число): "
+      seats = gets.chomp.to_i
+      carriage = PassengerCarriage.new(seats)
+    end
     @carriages << carriage
-    puts "Создан грузовой вагон: #{carriage}"
+    puts "Создан вагон (тип: #{carriage_or_train_type_string(type)}): #{carriage}"
   end
 
-  def create_passenger_carriage
-    print "Введите количество мест в вагоне (целое число): "
-    seats = gets.chomp.to_i
-    carriage = PassengerCarriage.new(seats)
-    @carriages << carriage
-    puts "Создан пассажирский вагон: #{carriage}"
+  def carriage_or_train_type_string(type)
+    case type
+    when :passenger
+      'пассажирский'
+    when :cargo
+      'грузовой'
+    end
   end
 
   def carriage_management
@@ -338,22 +346,17 @@ class Main
   end
 
   def reserve_passenger_carriage (selected_carriage)
-    if selected_carriage.reserve_seat
-      puts "Вы успешно заняли место. Остаток свободных мест: #{selected_carriage.free_seats}"
-    else
-      puts "К сожалению, свободных мест больше не осталось"
-    end
+    selected_carriage.reserve_seat
+  rescue => e
+    puts e.message
   end
 
   def reserve_cargo_carriage(selected_carriage)
     print "Введите объем загрузки: "
     load_volume = gets.chomp.to_i
-    if selected_carriage.reserve_volume(load_volume)
-      puts "Вы успешно разместили объем в вагоне. Остаток свободного места: #{selected_carriage.free_volume}"
-    else
-      puts "К сожалению, мы не можем погрузить такой объем груза в вагон. "\
-           "Свободный объем = #{selected_carriage.free_volume}"
-    end
+    selected_carriage.reserve_volume(load_volume)
+  rescue => e
+    puts e.message
   end
 
   def get_and_validate_answers(question, answers)
