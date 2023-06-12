@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Class for creating Passenger train
 class PassengerTrain < Train
   attr_reader :type
 
@@ -5,4 +8,4 @@ class PassengerTrain < Train
     @type = :passenger
     super(number)
   end
-end 
+end
