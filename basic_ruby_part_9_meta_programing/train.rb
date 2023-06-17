@@ -2,17 +2,21 @@
 
 require_relative 'manufacturer'
 require_relative 'instance_counter'
-require_relative 'validator'
+require_relative 'validation'
 
 # Class for creating trains
 # rubocop:disable Style/ClassVars
 class Train
   include Manufacturer
   include InstanceCounter
-  include Validator
+  include Validation
   attr_reader :speed, :carriages, :type, :number
 
   @@trains = []
+
+  validate :number, :format, /^([a-zа-я]{3}|[0-9]{3})-?([a-zа-я]{2}|[0-9]{2})$/i
+  validate :number, :presence
+  validate :number, :type, String
 
   def initialize(number)
     @number = number
@@ -86,23 +90,6 @@ class Train
 
   def previous_station
     @route.stations[@current_station_index - 1] if @current_station_index.positive?
-  end
-
-  private
-
-  def validate!
-    errors = []
-    errors << 'Number of train must be a String' if @number.class != String
-    if regexp_failed?
-      errors << 'Number of train must be eqaul to regular expression '\
-                'like 222-aaa / bbb-22 / 444ff / fff44 and etc'
-    end
-    raise errors.join(', ') unless errors.empty?
-  end
-
-  def regexp_failed?
-    regexp = /^([a-zа-я]{3}|[0-9]{3})-?([a-zа-я]{2}|[0-9]{2})$/i
-    (@number =~ regexp).nil?
   end
 end
 # rubocop:enable Style/ClassVars

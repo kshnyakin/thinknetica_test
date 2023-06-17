@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
 require_relative 'instance_counter'
-require_relative 'validator'
+require_relative 'validation'
 
 # Class for creating railroad stations
 # rubocop:disable Style/ClassVars
 class Station
   include InstanceCounter
-  include Validator
+  include Validation
   attr_reader :name, :trains
 
   @@stations = []
+
+  validate :name, :length, 3
+  validate :name, :presence
+  validate :name, :type, String
 
   def initialize(name)
     @name = name
@@ -41,18 +45,6 @@ class Station
 
   def trains_by_type(type)
     trains.select { |train| train.type == type }.size
-  end
-
-  private
-
-  def validate!
-    errors = []
-    errors << 'Station name must be a String' if @name.class != String
-    if @name.instance_of?(String) && @name.length < 3
-      errors << 'Station name length must '\
-                'be greater or equal 3'
-    end
-    raise errors.join(', ') unless errors.empty?
   end
 end
 # rubocop:enable Style/ClassVars

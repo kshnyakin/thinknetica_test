@@ -1,18 +1,23 @@
 # frozen_string_literal: true
 
-require_relative 'validator'
+require_relative 'validation'
 
 # Class for creating Cargo carriages
 class CargoCarriage < Carriage
-  include Validator
+  include Validation
 
+  validate :volume, :presence
+  validate :volume, :type, Integer
+  validate :volume, :min, 1
+
+  # rubocop:disable Lint/MissingSuper
   def initialize(volume)
-    super
     @type = :cargo
     @volume = volume
     @reserved_volume = 0
     validate! unless valid?
   end
+  # rubocop:enable Lint/MissingSuper
 
   def reserve_volume(size)
     if size > free_volume
@@ -26,14 +31,5 @@ class CargoCarriage < Carriage
 
   def free_volume
     @volume - @reserved_volume
-  end
-
-  private
-
-  def validate!
-    errors = []
-    errors << 'Cargo volume be an integer number' if @volume.class != Integer
-    errors << 'Cargo volume must be greater than null' if @volume.instance_of?(Integer) && @volume < 1
-    raise errors.join(', ') unless errors.empty?
   end
 end
