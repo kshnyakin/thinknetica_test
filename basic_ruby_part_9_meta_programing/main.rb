@@ -108,7 +108,7 @@ class Main
     train_type, train_number = prepare_train_creation
     begin
       handle_train_type(train_type, train_number)
-    rescue ArgumentError => e
+    rescue RuntimeError => e
       puts "Error: #{e.message}"
     ensure
       create_train if e
@@ -299,12 +299,18 @@ class Main
     print 'Введите объем вагона (целое число): '
     volume = gets.chomp.to_i
     CargoCarriage.new(volume)
+  rescue RuntimeError => e
+    puts "Error: #{e.message}"
+    retry
   end
 
   def create_passenger_train
     print 'Введите количество мест в вагоне (целое число): '
     seats = gets.chomp.to_i
     PassengerCarriage.new(seats)
+  rescue RuntimeError => e
+    puts "Error: #{e.message}"
+    retry
   end
 
   def carriage_or_train_type_string(type)

@@ -81,7 +81,7 @@ module Validation
       rescue StandardError => e
         errors << e.message
       end
-      raise "Validation errors = #{errors.join(', ')}" unless errors.empty?
+      raise errors.join(', ') unless errors.empty?
     end
 
     def valid?
