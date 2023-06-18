@@ -219,12 +219,12 @@ class Main
   end
 
   def route_moving
-    move_operation = select_train_and_operation
-    case move_operation
+    result = select_train_and_operation
+    case result[:move_operation]
     when 1
-      handle_next_station(train)
+      handle_next_station(result[:train])
     when 2
-      handle_previous_station(train)
+      handle_previous_station(result[:train])
     end
   end
 
@@ -234,10 +234,13 @@ class Main
     puts "Поезд находится на станции #{train.current_station.name}"
     question = 'Что нужно сделать с поездом?'
     answers = ['Переместить вперед по маршруту', 'Переместить назад по маршруту']
-    get_and_validate_answers(question, answers)
+    {
+      move_operation: get_and_validate_answers(question, answers),
+      train: train
+    }
   end
 
-  def handle_next_station
+  def handle_next_station(train)
     if train.go_next_station
       puts "поезд #{train} перемещен вперед на 1 станцию, текущая станция = #{train.current_station.name}"
     else
@@ -245,7 +248,7 @@ class Main
     end
   end
 
-  def handle_previous_station
+  def handle_previous_station(train)
     if train.go_previous_station
       puts "поезд #{train} перемещен назад на 1 станцию, текущая станция = #{train.current_station.name}"
     else
